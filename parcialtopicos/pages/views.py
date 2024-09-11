@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView, ListView
 from django.http import HttpResponseRedirect
@@ -37,7 +37,6 @@ class RegisterFlightView(View):
             })
             return context
 
-
 class ListFlightsView(ListView):
     template_name = 'pages/list.html'
 
@@ -45,8 +44,27 @@ class ListFlightsView(ListView):
         viewData = {}
         viewData["title"] = "Flights"
         viewData["subtitle"] = "List of Flisghts"
-        viewData["products"] = Flight.objects.all()
+        viewData["flights"] = Flight.objects.all()
         return render(request, self.template_name, viewData)
+    
+
+class ProductShowView(View):
+    template_name = 'pages/show.html'
+
+    def get(self, request, id):
+        try:
+            flight_id = int(id)
+            if flight_id < 1:
+                raise ValueError("Product ID must be greater 1 or greater")
+            product = get_object_or_404(Flight, id=flight_id)
+        except ValueError as e:
+            return HttpResponseRedirect(reverse('home'))
+        viewData = {}
+        flight = get_object_or_404(Flight, id=flight_id)
+        viewData["title"] = flight.name
+        viewData["subtitle"] = flight.name + " Flight information"
+        viewData["product"] = flight 
+        return render(request, self.template_name, viewData)    
     
 class FlightStatsView(TemplateView):
     template_name = 'pages/stats.html'
