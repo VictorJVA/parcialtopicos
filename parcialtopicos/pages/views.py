@@ -38,8 +38,8 @@ class RegisterFlightView(View):
             return context
 
 
-class ProductListFlightsView(ListView):
-    teomplate_name = 'pages/flights.html'
+class ListFlightsView(ListView):
+    template_name = 'pages/list.html'
 
     def get(self, request):
         viewData = {}
